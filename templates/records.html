@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Records{% endblock %}
+
+{% block content %}
+<header class="r_header">
+    <h1>Browse records</h1>
+
+    <form class="r_search" method="get" action="{{ url_for('views.records') }}" role="search">
+        <label class="r_search_label" for="search">Search by artist or title</label>
+        <input class="r_searchbox" id="search" type="search" name="q"
+               value="{{ request.args.get('q', '') }}" placeholder="Search by artist or title">
+        <button class="r_searchbtn" type="submit" aria-label="Search">
+            <img src="{{ url_for('static', filename='magnifier.png') }}" width="15" height="15" alt="">
+        </button>
+    </form>
+</header>
+
+<section aria-label="Records">
+    <ul class="r_grid">
+        <li class="r_card">
+            <div class="r_sleeve">
+                <div class="r_disc" aria-hidden="true"></div>
+                <div class="r_cover">
+                    <!-- ALBUM PICTURE HERE !-->
+                </div>
+            </div>
+            <!-- ALBUM DETAILS HERE !-->
+        </li>
+        <!-- {% endfor %} !-->
+    </ul>
+    {% else %}
+    <div class="r_empty">
+        {% if request.args.get('q') %}
+        <p>No records match "{{ requests.args.get('q') }}".</p>
+        <p>Check the spelling or try just the artist's name.</p>
+        {% else %}
+        <p>There are no records in the shop yet.</p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Sign Up</h1>
+<br>
+<div class="registerForm10">
+    <div class="registerForm10_desktop">
+        <form action="#" method="POST">
+            <ul>
+                <li><label>Username: <input type="text" name="regUsername"/></label></li>
+                <li><label>Email: <input type="text" name="regEmail"/></label></li>
+                <li><label>Password: <input type="password" name="regPassword" placeholder="********"/></label></li>
+            </ul>
+            <p><input type="submit" value="Submit"></p>
+        </form>
+    </div>
+</div>
+<br>
+{% with messages = get_flashed_messages()%}
+{% if messages%}
+    {% for message in messages%}
+    <h3>{{message}}</h3>
+    {%endfor%}
+    {%endif%}
+    {%endwith%}
+
+{% endblock %}

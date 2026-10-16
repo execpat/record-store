@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %} Account {% endblock %}
+
+{% block content %}
+<div>
+    <h1>Account Page</h1><br>
+    <h2 class="r_heading">Welcome, {{ username }}!</h2>
+    <br>
+    {% with messages = get_flashed_messages()%}
+    {% if messages %}
+    {% for message in messages%}
+    <h3 class="info_message">{{message}}</h3>
+    {%endfor%}
+    {%endif%}
+    {%endwith%}
+</div>
+<br>
+<div>
+    <h2>Settings</h2>
+    <br>
+    <div>
+        <form name="change_username" method="POST" action="{{ url_for('views.account') }}">
+            Username: <label><input type="text" name="newUsername" placeholder="{{ username }}"></label><button>Change</button>
+        </form>
+        <br>
+        <form name="change_email" method="POST" action="{{ url_for('views.account') }}">
+            Email: <label><input type="email" name="newEmail"></label><button>Change</button>
+        </form>
+        <br>
+        <form name="change_password" method="POST" action="{{ url_for('views.account') }}">
+            Password: <label><input type="password" name="newPassword" placeholder="********"></label><button>Change</button>
+        </form>
+    </div>
+</div>
+<br>
+{% if username=="AlbumshopAdmin3" %}
+<h2>Add New Album</h2>
+<div>
+  <form method="POST" enctype="multipart/form-data" name="add_album">
+    <ul>
+      <li><label>Album Name: <input type="text" name="new_albumName" required></label></li>
+      <li><label>Album Artist: <input type="text" name="new_albumArtist" required></label></li>
+      <li><label>Album Genre: <input type="text" name="new_albumGenre" required></label></li>
+      <li><label>Album Year: <input type="number" name="new_albumYear" min="1900" max="2100" required></label></li>
+      <li><label>Album Price: <input type="number" name="new_albumPrice" min="0" step="0.01" required></label></li>
+      <li><label>Album Cover: <input type="file" id="imageUpload" name="new_albumCover" accept="image/*" required></label></li>
+    </ul>
+      <p><input type="submit" value="Submit" name="add_album"></p>
+  </form>
+</div>
+
+<script>
+  const SIZE = 300;
+
+  document.getElementById('imageUpload').addEventListener('change', function (e) {
+    const input = e.target;
+    const file = input.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = function () {
+      URL.revokeObjectURL(url);
+
+      if (img.width === SIZE && img.height === SIZE) return; // already correct
+
+      const canvas = document.createElement('canvas');
+      canvas.width = SIZE;
+      canvas.height = SIZE;
+      const ctx = canvas.getContext('2d');
+
+      // White background so transparent PNGs don't turn black
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, SIZE, SIZE);
+
+      // Crop to a centered square instead of stretching
+      const side = Math.min(img.width, img.height);
+      const sx = (img.width - side) / 2;
+      const sy = (img.height - side) / 2;
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, SIZE, SIZE);
+
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        const resized = new File([blob], 'cover.jpg', { type: 'image/jpeg' });
+        const dt = new DataTransfer();
+        dt.items.add(resized);
+        input.files = dt.files; // replaces the file the form will submit
+      }, 'image/jpeg', 0.9);
+    };
+
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      alert('That file could not be read as an image.');
+      input.value = '';
+    };
+
+    img.src = url;
+  });
+</script>
+{% else %}
+<p>...</p>
+{% endif %}
+
+{% endblock %}
